@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Integration</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h1>Razorpay Payment Integration</h1>
+    <button id="rzp-button1">Pay</button>
+    <script>
+        document.getElementById('rzp-button1').onclick = function (e) {
+            fetch('/createOrder')
+                .then(response => response.json())
+                .then(data => {
+                    var options = {
+                        "key": "rzp_test_K5ypQQHlyazruc", // Enter the Key ID generated from the Razorpay Dashboard
+                        "amount": data.amount,
+                        "currency": data.currency,
+                        "name": "Water dispenser",
+                        "description": "Testing purpose",
+                        "image": "https://s3.amazonaws.com/rzp-mobile/images/rzp.svg",
+                        "handler": function (response){
+                            alert("Payment successful: " + response.razorpay_payment_id);
+                        },
+                        "prefill": {
+                            "name": "Srujankm",
+                            "email": "srujankm12@gmail.com",
+                            "contact": "9818781922"
+                        },
+                        "notes": {
+                            "address": "shivamogga karnataka,india"
+                        },
+                        "theme": {
+                            "color": "#3399cc"
+                        }
+                    };
+                    var rzp1 = new Razorpay(options);
+                    rzp1.on('payment.failed', function (response){
+                        alert("Payment failed: " + response.error.description);
+                    });
+                    rzp1.open();
+                    e.preventDefault();
+                });
+        }
+    </script>
+</body>
+</html>
